@@ -8,11 +8,9 @@ var twilio     = require('twilio'),
 
 // Create express app with middleware to parse POST body
 var app = express();
-
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(multer()); // for parsing multipart/form-data
-
 
 // Create a route to respond to a call
 app.post('/incomingCall', function(req, res) {
@@ -33,6 +31,7 @@ app.post('/incomingCall', function(req, res) {
     res.send(twiml.toString());
 });
 
-app.listen(process.env.PORT || 3000, function() {
-  console.log('Server running... (Twilio number: +339 75 18 93 87)');
+port = process.env.PORT || 3000
+app.listen(port, function() {
+  console.log("Server listens on port " + port + "...\n- Twilio number: +33 9 75 18 93 87");
 });
