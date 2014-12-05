@@ -11,7 +11,7 @@ var app = express();
 app.post('/incomingCall', function(req, res) {
     //Validate that this request really came from Twilio...
     var twiml = new twilio.TwimlResponse();
-    twiml.say('Hello from node.js!');
+    twiml.say('Hello from node.js');
 
     // Render the TwiML response as XML
     res.type('text/xml');
