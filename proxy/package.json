@@ -2,7 +2,9 @@
   "name": "hive-beep",
   "version": "0.0.1",
   "dependencies": {
+    "body-parser": "^1.10.0",
     "express": "^4.10.4",
+    "multer": "^0.1.6",
     "twilio": "^1.9.0"
   },
   "engines": {
