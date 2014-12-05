@@ -12,12 +12,34 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(multer()); // for parsing multipart/form-data
 
+// OutboundCall
+app.post('/outbound_call', function(req, res) {
+  var twiml = new twilio.TwimlResponse();
+
+  // Say a message to the call's receiver
+  twiml.say('BEEP!', { voice: 'woman', language: 'fr' });
+
+  // Render the TwiML response as XML
+  res.type('text/xml');
+  res.send(twiml.toString());
+});
+
 // Code
 app.post('/code', function(req, res) {
   var code = req.body.Digits;
   var twiml = new twilio.TwimlResponse();
-  if (code == '1234')
+
+  if (code == '1234') {
     twiml.say('We will open the door');
+    // Make call in an "other" process
+    client.makeCall({
+      from: '+33975189387', // use Twillio number (valid on Arduino beep)
+      to: '+33642342298',   // to Arduino beep
+      url: 'http://beep.ngrok.com/outbound_call' // What to say the Arduino beep
+    }, function(error, data) {
+      console.log(error);
+    });
+  }
   else
     twiml.say('Sorry, the code was wrong!');
 
@@ -31,14 +53,20 @@ app.post('/incomingCall', function(req, res) {
 
     people = {
       '+33642342298': 'Matthieu',
-      '+33633984732': 'Fabien'
+      '+33633984732': 'Fabien',
+      '+33678859996': 'Simon'
     };
 
     name = people[req.body.From];
 
-    //Validate that this request really came from Twilio...
+    // Ask a code for accessing
     var twiml = new twilio.TwimlResponse();
-    twiml.gather({ action: '/code', method: 'post', finishOnKey:'*' }, function() {
+    twiml.gather({
+      action: '/code',  // redirect to
+      method: 'post',   // method (POST || GET)
+      finishOnKey: '*', // finish with '*' (not included)
+      timeout: '30'     // wait just 30 seconds
+    }, function() {
       this.say('Hello ' + name +'. Please enter the code and then press star.');
     });
 
