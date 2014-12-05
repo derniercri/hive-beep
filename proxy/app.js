@@ -12,6 +12,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(multer()); // for parsing multipart/form-data
 
+// Code
 app.post('/code', function(req, res) {
   var code = req.body.Digits;
   var twiml = new twilio.TwimlResponse();
@@ -25,7 +26,7 @@ app.post('/code', function(req, res) {
   res.send(twiml.toString());
 });
 
-// Create a route to respond to a call
+// Respond to a call
 app.post('/incomingCall', function(req, res) {
 
     people = {
@@ -33,7 +34,7 @@ app.post('/incomingCall', function(req, res) {
       '+33633984732': 'Fabien'
     };
 
-    name = people[req.body.From]
+    name = people[req.body.From];
 
     //Validate that this request really came from Twilio...
     var twiml = new twilio.TwimlResponse();
