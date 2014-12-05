@@ -12,6 +12,19 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(multer()); // for parsing multipart/form-data
 
+app.post('/code', function(req, res) {
+  var code = req.body.Digits;
+  var twiml = new twilio.TwimlResponse();
+  if (code == '1234')
+    twiml.say('We will open the door');
+  else
+    twiml.say('Sorry, the code was wrong!');
+
+  // Render the TwiML response as XML
+  res.type('text/xml');
+  res.send(twiml.toString());
+});
+
 // Create a route to respond to a call
 app.post('/incomingCall', function(req, res) {
 
@@ -24,7 +37,9 @@ app.post('/incomingCall', function(req, res) {
 
     //Validate that this request really came from Twilio...
     var twiml = new twilio.TwimlResponse();
-    twiml.say('Hello ' + name);
+    twiml.gather({ action: '/code', method: 'post', finishOnKey:'*' }, function() {
+      this.say('Hello ' + name +'. Please enter the code and then press star.');
+    });
 
     // Render the TwiML response as XML
     res.type('text/xml');
